@@ -64,6 +64,12 @@ ui <- fluidPage(
         mainPanel(
             plotOutput("scatPlot"),
             plotOutput("lmPlot"),
+            h3("Slope"),
+            textOutput("slopeVal"),
+            h3("Intercept"),
+            textOutput("intVal"),
+            h3("Correlation Coefficient"),
+            textOutput("corrcoeffVal"),
             tableOutput("contents")
         )
     )
@@ -103,8 +109,17 @@ server <- function(input, output) {
     output$lmPlot <- renderPlot({
         plot(dataInput()$x,dataInput()$y)
         abline(linreg())
+        
+        linreg_summary <- summary(linreg())
+        #print(linreg_summary)
+        slope <- linreg_summary$coefficients[[2]]
+        intercept <- linreg_summary$coefficients[[1]]
+        corrcoeff <- linreg_summary$adj.r.squared
+        
+        output$slopeVal <- renderText({slope})
+        output$intVal <- renderText({intercept})
+        output$corrcoeffVal <- renderText({corrcoeff})
     })
-    
     
     output$contents <- renderTable({
         
